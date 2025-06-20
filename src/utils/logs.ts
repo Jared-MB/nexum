@@ -81,17 +81,20 @@ export class NexumLogger {
 		analysis.metadata.tags.length > 0 &&
 			console.log(`\t   └─ Tags: [${analysis.metadata.tags.join(", ")}]`);
 
-		NEXUM_CONFIG?.debug?.showCacheConfidence &&
+		NEXUM_CONFIG?.debug?.cacheLogging?.showCacheConfidence &&
 			console.log(
 				`\t   └─ Confidence: (${Math.round(analysis.confidence * 100)}%)`,
 			);
 
-		if (NEXUM_CONFIG?.debug.showCacheStrategy && analysis.metadata.strategy) {
+		if (
+			NEXUM_CONFIG?.debug?.cacheLogging?.showCacheStrategy &&
+			analysis.metadata.strategy
+		) {
 			console.log(`\t   └─ Strategy: ${analysis.metadata.strategy}`);
 		}
 
 		if (
-			NEXUM_CONFIG?.debug?.showCacheIndicators &&
+			NEXUM_CONFIG?.debug?.cacheLogging?.showCacheIndicators &&
 			analysis.indicators.length > 0
 		) {
 			console.log(`\t   └─ Indicators: ${analysis.indicators.join(", ")}`);

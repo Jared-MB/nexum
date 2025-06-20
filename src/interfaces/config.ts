@@ -6,9 +6,10 @@ export interface NexumConfig {
 	debug?: {
 		emptyTagsWarning?: boolean;
 		emptyMutationTagsWarning?: boolean;
-		cacheLogging?: boolean;
-		showCacheConfidence?: boolean;
-		showCacheIndicators?: boolean;
-		showCacheStrategy?: boolean;
+		cacheLogging?: {
+			showCacheConfidence?: boolean;
+			showCacheIndicators?: boolean;
+			showCacheStrategy?: boolean;
+		};
 	};
 }

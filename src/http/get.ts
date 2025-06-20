@@ -22,7 +22,7 @@ interface GetOptions extends HttpOptions {
 	tags?: string[];
 	/**
 	 * Cache control strategy for the request.
-	 * @default "no-store"
+	 * @default "default"
 	 */
 	cache?: RequestCache;
 	/**
@@ -38,6 +38,7 @@ export const GET = async <T = unknown>(
 	url: Url,
 	options?: GetOptions,
 ): Promise<ApiResponse<T>> => {
+	const cacheStrategy = options?.cache ?? "default";
 	const method = HTTP.GET;
 
 	const SERVER_URL = NEXUM_CONFIG?.serverUrl;
@@ -73,7 +74,7 @@ export const GET = async <T = unknown>(
 				tags: options?.tags,
 				revalidate: options?.revalidate,
 			},
-			cache: options?.cache ?? "no-store",
+			cache: cacheStrategy,
 		}),
 	);
 
@@ -81,6 +82,8 @@ export const GET = async <T = unknown>(
 
 	if (responseError) {
 		logger.error(`[GET] Error fetching data at: ${url}`);
+		console.log(`\t   └─ Name: ${responseError.name}`);
+		console.log(`\t   └─ Reason: ${responseError.message}`);
 
 		return {
 			data: undefined,
@@ -100,6 +103,8 @@ export const GET = async <T = unknown>(
 		}
 
 		logger.error(`[GET] Error fetching data at: ${url} [${response.status}]`);
+		console.log(`\t   └─ Status: ${response.statusText}`);
+		console.log(`\t   └─ Reason: ${data.message}`);
 
 		return {
 			data: undefined,
@@ -120,7 +125,7 @@ export const GET = async <T = unknown>(
 		{
 			tags: options?.tags,
 			revalidate: options?.revalidate,
-			cache: options?.cache ?? "no-store",
+			cache: cacheStrategy,
 		},
 		{ start: fetchStartTime, end: fetchEndTime },
 	);

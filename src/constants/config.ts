@@ -8,9 +8,10 @@ export const __DEFAULT_CONFIG__ = {
 	debug: {
 		emptyTagsWarning: true,
 		emptyMutationTagsWarning: true,
-		cacheLogging: true,
-		showCacheConfidence: false,
-		showCacheIndicators: false,
-		showCacheStrategy: false,
+		cacheLogging: {
+			showCacheConfidence: false,
+			showCacheIndicators: false,
+			showCacheStrategy: false,
+		},
 	},
 } as const satisfies NexumConfig;
