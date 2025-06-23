@@ -10,10 +10,9 @@
 		"moduleResolution": "Node"
 	},
 	"include": [
-		"src", 
-		"next-env.d.ts", 
-		"node_modules/next/types/**/*.ts", 
+		"src",
 		"next-env.d.ts",
+		"node_modules/next/types/**/*.ts",
 		".next/types/**/*.ts"
 	],
 	"exclude": ["node_modules", "dist"]
