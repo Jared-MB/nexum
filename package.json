@@ -17,6 +17,10 @@
 		"./config": {
 			"types": "./dist/interfaces/config.d.ts",
 			"default": "./dist/interfaces/config.js"
+		},
+		"./status": {
+			"types": "./dist/interfaces/status.ts",
+			"default": "./dist/interfaces/status.js"
 		}
 	},
 	"scripts": {
