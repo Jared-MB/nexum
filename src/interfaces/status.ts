@@ -1,4 +1,6 @@
 export enum STATUS {
 	OK = 200,
 	CREATED = 201,
+	PAYMENT_REQUIRED = 402,
+	FORBIDDEN = 403,
 }
