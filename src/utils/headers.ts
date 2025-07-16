@@ -41,7 +41,7 @@ export const getHeaders = async ({
 		throw new NotDefinedError({
 			message: "**Access token is not defined**",
 			solution:
-				"Is this a **non-authenticated request**? If yes pass the **auth** option to the request. \n If not, make sure your **sessionCookieName** in your config file is the same as your cookie name in your browser",
+				"Is this a **non-authenticated request**? If it isn't an authenticated request, pass the **auth** option as false to the request. \n If not, make sure your **sessionCookieName** in your config file is the same as your cookie name in your browser",
 		});
 	}
 
