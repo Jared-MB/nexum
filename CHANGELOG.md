@@ -1,5 +1,11 @@
 # @kristall/nexum
 
+## 1.2.0
+
+### Minor Changes
+
+- d7f920e: Fix: add a better solution when no access token is provided
+
 ## 1.1.2
 
 ### Patch Changes
