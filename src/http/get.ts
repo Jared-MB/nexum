@@ -3,6 +3,7 @@
 import type { Url } from "../interfaces/routes.js";
 import type { ApiResponse } from "../interfaces/server.js";
 
+import { tryCatch } from "@kristall/try-catch";
 import { HTTP, type HttpOptions } from "../interfaces/methods.js";
 import { analyzeCacheStatus } from "../utils/cache/cache-detector";
 import { NEXUM_CONFIG } from "../utils/config";
@@ -11,7 +12,6 @@ import { getHeaders } from "../utils/headers";
 import { __IS__DEV__ } from "../utils/isDev";
 import { logger } from "../utils/logs";
 import { parseErrorResponse } from "../utils/responses";
-import { tryCatch } from "../utils/tryCatch";
 
 interface GetOptions extends HttpOptions {
 	/**

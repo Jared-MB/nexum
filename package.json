@@ -25,16 +25,19 @@
 	},
 	"scripts": {
 		"dev": "tsc --watch",
-		"build": "tsc"
+		"build": "tsc",
+		"test": "vitest"
 	},
 	"dependencies": {
+		"@kristall/try-catch": "workspace:*",
 		"chalk": "5.4.1",
 		"cosmiconfig": "9.0.0",
 		"cosmiconfig-typescript-loader": "6.1.0"
 	},
 	"devDependencies": {
 		"@kristall/typescript-config": "workspace:*",
-		"typescript": "5.8.3"
+		"typescript": "5.8.3",
+		"vitest": "3.2.4"
 	},
 	"peerDependencies": {
 		"next": "^15"
