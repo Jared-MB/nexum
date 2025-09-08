@@ -1,5 +1,18 @@
 # @kristall/nexum
 
+## 1.4.1
+
+### Patch Changes
+
+- 9e30216: Custom headers on every method
+
+## 1.3.1
+
+### Patch Changes
+
+- Updated dependencies [5fed1e8]
+  - @kristall/try-catch@2.0.0
+
 ## 1.3.0
 
 ### Minor Changes

@@ -13,4 +13,8 @@ export interface HttpOptions {
 	 * This option will override the defaultAuthRequests option.
 	 */
 	auth?: boolean;
+	/**
+	 * Custom headers to be used for the request.
+	 */
+	headers?: HeadersInit;
 }

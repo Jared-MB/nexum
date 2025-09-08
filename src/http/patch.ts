@@ -40,7 +40,9 @@ export const PATCH = async <T = unknown, B = any>(
 		});
 	}
 
-	const [error, headers] = await tryCatch(getHeaders({ auth: options?.auth }));
+	const [error, headers] = await tryCatch(
+		getHeaders({ auth: options?.auth, customHeaders: options?.headers }),
+	);
 	if (error) {
 		throw error;
 	}

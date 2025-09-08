@@ -42,14 +42,16 @@ export const GET = async <T = unknown>(
 	const method = HTTP.GET;
 
 	const SERVER_URL = NEXUM_CONFIG?.serverUrl;
-	if (!SERVER_URL) {
+	if (__IS__DEV__ && !SERVER_URL) {
 		throw new NotDefinedError({
 			message: "Server URL is not defined",
 			solution: "Make sure you have set the server URL in your config file",
 		});
 	}
 
-	const [error, headers] = await tryCatch(getHeaders({ auth: options?.auth }));
+	const [error, headers] = await tryCatch(
+		getHeaders({ auth: options?.auth, customHeaders: options?.headers }),
+	);
 	if (error) {
 		throw error;
 	}

@@ -1,6 +1,8 @@
 import { tryCatch } from "@kristall/try-catch";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { analyzeCacheStatus } from "../../utils/cache/cache-detector";
 import type { ApiResponse } from "../../interfaces/server";
+import type { CacheAnalysis } from "../../interfaces/cache";
 import { NEXUM_CONFIG } from "../../utils/config";
 import { NotDefinedError } from "../../utils/errors";
 import { getHeaders } from "../../utils/headers";
@@ -19,11 +21,13 @@ vi.mock("../../utils/headers");
 vi.mock("../../utils/logs");
 vi.mock("../../utils/responses");
 vi.mock("@kristall/try-catch");
+vi.mock("../../utils/cache/cache-detector");
 vi.mock("../../utils/isDev", () => ({ __IS__DEV__: true }));
 
 // Mock global fetch and console
 global.fetch = vi.fn();
 vi.spyOn(console, "log").mockImplementation(() => {});
+vi.spyOn(Date, "now").mockReturnValue(new Date().getTime());
 
 // Helper to create a mock Response object
 const createMockResponse = (
@@ -61,6 +65,9 @@ describe("GET function", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		NEXUM_CONFIG.serverUrl = "http://api.test.com";
+		if (NEXUM_CONFIG.debug) {
+			NEXUM_CONFIG.debug.emptyTagsWarning = true;
+		}
 		vi.mocked(tryCatch).mockImplementation(mockTryCatchChain as any);
 	});
 
@@ -210,7 +217,7 @@ describe("GET function", () => {
 		expect(parseErrorResponse).toHaveBeenCalled();
 	});
 
-	it.skip("should log a warning if tags are missing and warning is enabled (dev)", async () => {
+		it("should log a warning if tags are missing and warning is enabled (dev)", async () => {
 		const mockApiResponse = {
 			data: { message: "Success" },
 			status: 200,
@@ -231,6 +238,103 @@ describe("GET function", () => {
 
 		expect(logger.warn).toHaveBeenCalledWith(
 			"[GET] Empty or missing tags array passed to GET request to http://api.test.com/test",
+		);
+	});
+
+	it("should not log a warning if tags are missing and warning is disabled", async () => {
+				if (NEXUM_CONFIG.debug) {
+			NEXUM_CONFIG.debug.emptyTagsWarning = false;
+		}
+		const mockApiResponse = {
+			data: { message: "Success" },
+			status: 200,
+			message: "OK",
+		};
+		const mockResponse = createMockResponse(mockApiResponse, {
+			ok: true,
+			status: 200,
+			statusText: "OK",
+		});
+
+		vi.mocked(getHeaders).mockResolvedValue({});
+		vi.mocked(fetch).mockResolvedValue(mockResponse);
+
+		await GET("/test", { tags: [] });
+
+		expect(logger.warn).not.toHaveBeenCalled();
+	});
+
+	it("should call fetch with the correct cache options", async () => {
+		const mockApiResponse = {
+			data: { message: "Success" },
+			status: 200,
+			message: "OK",
+		};
+		const mockResponse = createMockResponse(mockApiResponse, {
+			ok: true,
+			status: 200,
+			statusText: "OK",
+		});
+
+		vi.mocked(getHeaders).mockResolvedValue({});
+		vi.mocked(fetch).mockResolvedValue(mockResponse);
+
+		await GET("/test", {
+			tags: ["tag1"],
+			revalidate: 3600,
+			cache: "force-cache",
+		});
+
+		expect(fetch).toHaveBeenCalledWith(
+			"http://api.test.com/test",
+			expect.objectContaining({
+				next: {
+					tags: ["tag1"],
+					revalidate: 3600,
+				},
+				cache: "force-cache",
+			}),
+		);
+	});
+
+	it("should call logger and cache analysis on successful fetch", async () => {
+		const mockApiResponse = {
+			data: { message: "Success" },
+			status: 200,
+			message: "OK",
+		};
+		const mockResponse = createMockResponse(mockApiResponse, {
+			ok: true,
+			status: 200,
+			statusText: "OK",
+		});
+
+		vi.mocked(getHeaders).mockResolvedValue({});
+		vi.mocked(fetch).mockResolvedValue(mockResponse);
+				const mockCacheAnalysis: CacheAnalysis = {
+			status: "HIT",
+			confidence: 1,
+			indicators: ["mocked"],
+			metadata: {
+				tags: [],
+				duration: 1,
+				strategy: "default",
+			},
+		};
+		vi.mocked(analyzeCacheStatus).mockReturnValue(mockCacheAnalysis);
+
+		await GET("/test");
+
+		expect(logger.requestLog).toHaveBeenCalledWith({
+			method: "GET",
+			url: "/test",
+			status: 200,
+		});
+		expect(analyzeCacheStatus).toHaveBeenCalled();
+				expect(logger.cacheStatus).toHaveBeenCalledWith(
+			mockCacheAnalysis,
+			"/test",
+			"GET",
 		);
 	});
 });

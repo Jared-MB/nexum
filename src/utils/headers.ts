@@ -6,7 +6,8 @@ import { NotDefinedError } from "./errors";
 
 export const getHeaders = async ({
 	auth,
-}: { auth?: boolean }): Promise<HeadersInit> => {
+	customHeaders,
+}: { auth?: boolean; customHeaders?: HeadersInit }): Promise<HeadersInit> => {
 	const defaultAuthRequests = NEXUM_CONFIG.defaultAuthRequests;
 	if (typeof defaultAuthRequests !== "boolean") {
 		throw new NotDefinedError({
@@ -23,7 +24,10 @@ export const getHeaders = async ({
 	};
 
 	if (!needAuth) {
-		return headers;
+		return {
+			...headers,
+			...customHeaders,
+		};
 	}
 
 	const sessionCookieName = NEXUM_CONFIG.sessionCookieName;
@@ -57,5 +61,6 @@ export const getHeaders = async ({
 		...headers,
 		Authorization: `${tokenVerb} ${accessToken}`,
 		Cookie: `${sessionCookieName}=${accessToken}`,
+		...customHeaders,
 	};
 };
