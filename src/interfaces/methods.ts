@@ -17,4 +17,12 @@ export interface HttpOptions {
 	 * Custom headers to be used for the request.
 	 */
 	headers?: HeadersInit;
+	/**
+	 * Server URL to be used for the request.
+	 *
+	 * Its not necessary to use this option if you have set the `serverUrl` option in your config file.
+	 *
+	 * This option will override the `serverUrl` option.
+	 */
+	serverUrl?: string;
 }

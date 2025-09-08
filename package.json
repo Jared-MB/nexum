@@ -1,6 +1,6 @@
 {
 	"name": "@kristall/nexum",
-	"version": "1.4.1",
+	"version": "1.5.0",
 	"type": "module",
 	"main": "dist/index.js",
 	"module": "dist/index.js",
@@ -21,6 +21,10 @@
 		"./status": {
 			"types": "./dist/interfaces/status.ts",
 			"default": "./dist/interfaces/status.js"
+		},
+		"./client": {
+			"types": "./src/utils/create-http-client.ts",
+			"default": "./dist/utils/create-http-client.js"
 		}
 	},
 	"scripts": {

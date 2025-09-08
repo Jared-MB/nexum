@@ -1,5 +1,11 @@
 # @kristall/nexum
 
+## 1.5.0
+
+### Minor Changes
+
+- 6e914c8: Now can create custom client http to handle request to multiple origins. Data response now return all payload from request if the format its not like ApiResponse
+
 ## 1.4.1
 
 ### Patch Changes

@@ -13,7 +13,7 @@ import { parseErrorResponse } from "../utils/responses";
 import { revalidateCacheTags } from "../utils/revalidation";
 import { tryCatch } from "../utils/tryCatch";
 
-interface PatchOptions extends HttpOptions {
+export interface PatchOptions extends HttpOptions {
 	/**
 	 * **NEXTJS ONLY**
 	 *
@@ -32,11 +32,12 @@ export const PATCH = async <T = unknown, B = any>(
 ): Promise<ApiResponse<T>> => {
 	const method = HTTP.PATCH;
 
-	const SERVER_URL = NEXUM_CONFIG?.serverUrl;
+	const SERVER_URL = options?.serverUrl ?? NEXUM_CONFIG?.serverUrl;
 	if (!SERVER_URL) {
 		throw new NotDefinedError({
 			message: "Server URL is not defined",
-			solution: "Make sure you have set the server URL in your config file",
+			solution:
+				"Make sure you have set the server URL in your config file or pass the serverUrl option to the request",
 		});
 	}
 
@@ -65,9 +66,18 @@ export const PATCH = async <T = unknown, B = any>(
 		};
 	}
 
-	const [parseError, data] = await tryCatch(
-		response.json() as Promise<ApiResponse<T>>,
-	);
+	const [parseError, payload] = await tryCatch<unknown>(response.json());
+
+	let data: ApiResponse<T> | undefined;
+	if (
+		payload &&
+		typeof payload === "object" &&
+		"data" in payload &&
+		"message" in payload &&
+		"status" in payload
+	) {
+		data = payload as ApiResponse<T>;
+	}
 
 	if (!response.ok) {
 		if (parseError) {
@@ -94,8 +104,8 @@ export const PATCH = async <T = unknown, B = any>(
 	await revalidateCacheTags(options?.revalidateTags, url);
 
 	return {
-		data: data?.data,
-		message: data.message ?? response.statusText ?? "Created",
-		status: data.status ?? response.status ?? 201,
+		data: data?.data ?? (payload as T),
+		message: data?.message ?? response.statusText ?? "Ok",
+		status: data?.status ?? response.status ?? 200,
 	};
 };

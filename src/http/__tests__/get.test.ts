@@ -1,8 +1,8 @@
 import { tryCatch } from "@kristall/try-catch";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { analyzeCacheStatus } from "../../utils/cache/cache-detector";
-import type { ApiResponse } from "../../interfaces/server";
 import type { CacheAnalysis } from "../../interfaces/cache";
+import type { ApiResponse } from "../../interfaces/server";
+import { analyzeCacheStatus } from "../../utils/cache/cache-detector";
 import { NEXUM_CONFIG } from "../../utils/config";
 import { NotDefinedError } from "../../utils/errors";
 import { getHeaders } from "../../utils/headers";
@@ -146,7 +146,7 @@ describe("GET function", () => {
 
 		expect(result).toEqual({
 			data: undefined,
-			message: "Not found",
+			message: "Not Found",
 			status: 404,
 		});
 		expect(logger.error).toHaveBeenCalledWith(
@@ -184,6 +184,30 @@ describe("GET function", () => {
 		expect(parseErrorResponse).toHaveBeenCalled();
 	});
 
+	it("should return response payload on data if it is not an like an ApiResponse format", async () => {
+		const mockResponse = createMockResponse(
+			{ messageText: "Success", session: { user: "1" } },
+			{
+				ok: true,
+				status: 200,
+				statusText: "Ok",
+			},
+		);
+
+		vi.mocked(getHeaders).mockResolvedValue({
+			"Content-Type": "application/json",
+		});
+		vi.mocked(fetch).mockResolvedValue(mockResponse);
+
+		const result = await GET("/test");
+
+		expect(result).toEqual({
+			data: { messageText: "Success", session: { user: "1" } },
+			message: "Ok",
+			status: 200,
+		});
+	});
+
 	it("should handle parsing errors for ok responses", async () => {
 		const mockResponse = createMockResponse(null, {
 			ok: true,
@@ -217,7 +241,7 @@ describe("GET function", () => {
 		expect(parseErrorResponse).toHaveBeenCalled();
 	});
 
-		it("should log a warning if tags are missing and warning is enabled (dev)", async () => {
+	it("should log a warning if tags are missing and warning is enabled (dev)", async () => {
 		const mockApiResponse = {
 			data: { message: "Success" },
 			status: 200,
@@ -242,7 +266,7 @@ describe("GET function", () => {
 	});
 
 	it("should not log a warning if tags are missing and warning is disabled", async () => {
-				if (NEXUM_CONFIG.debug) {
+		if (NEXUM_CONFIG.debug) {
 			NEXUM_CONFIG.debug.emptyTagsWarning = false;
 		}
 		const mockApiResponse = {
@@ -311,7 +335,7 @@ describe("GET function", () => {
 
 		vi.mocked(getHeaders).mockResolvedValue({});
 		vi.mocked(fetch).mockResolvedValue(mockResponse);
-				const mockCacheAnalysis: CacheAnalysis = {
+		const mockCacheAnalysis: CacheAnalysis = {
 			status: "HIT",
 			confidence: 1,
 			indicators: ["mocked"],
@@ -331,7 +355,7 @@ describe("GET function", () => {
 			status: 200,
 		});
 		expect(analyzeCacheStatus).toHaveBeenCalled();
-				expect(logger.cacheStatus).toHaveBeenCalledWith(
+		expect(logger.cacheStatus).toHaveBeenCalledWith(
 			mockCacheAnalysis,
 			"/test",
 			"GET",

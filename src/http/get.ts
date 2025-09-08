@@ -13,7 +13,7 @@ import { __IS__DEV__ } from "../utils/isDev";
 import { logger } from "../utils/logs";
 import { parseErrorResponse } from "../utils/responses";
 
-interface GetOptions extends HttpOptions {
+export interface GetOptions extends HttpOptions {
 	/**
 	 * **ONLY FOR NEXTJS**
 	 *
@@ -41,11 +41,12 @@ export const GET = async <T = unknown>(
 	const cacheStrategy = options?.cache ?? "default";
 	const method = HTTP.GET;
 
-	const SERVER_URL = NEXUM_CONFIG?.serverUrl;
+	const SERVER_URL = options?.serverUrl ?? NEXUM_CONFIG?.serverUrl;
 	if (__IS__DEV__ && !SERVER_URL) {
 		throw new NotDefinedError({
 			message: "Server URL is not defined",
-			solution: "Make sure you have set the server URL in your config file",
+			solution:
+				"Make sure you have set the server URL in your config file or pass the serverUrl option to the request",
 		});
 	}
 
@@ -94,9 +95,18 @@ export const GET = async <T = unknown>(
 		};
 	}
 
-	const [parseError, data] = await tryCatch(
-		response.json() as Promise<ApiResponse<T>>,
-	);
+	const [parseError, payload] = await tryCatch<unknown>(response.json());
+
+	let data: ApiResponse<T> | undefined;
+	if (
+		payload &&
+		typeof payload === "object" &&
+		"data" in payload &&
+		"message" in payload &&
+		"status" in payload
+	) {
+		data = payload as ApiResponse<T>;
+	}
 
 	if (!response.ok) {
 		if (parseError) {
@@ -106,7 +116,7 @@ export const GET = async <T = unknown>(
 
 		logger.error(`[GET] Error fetching data at: ${url} [${response.status}]`);
 		console.log(`\t   └─ Status: ${response.statusText}`);
-		console.log(`\t   └─ Reason: ${data.message}`);
+		console.log(`\t   └─ Reason: ${data?.message ?? response.statusText}`);
 
 		return {
 			data: undefined,
@@ -135,7 +145,7 @@ export const GET = async <T = unknown>(
 	logger.cacheStatus(cacheAnalysis, url, method);
 
 	return {
-		data: data?.data,
+		data: data?.data ?? (payload as T),
 		message: data?.message ?? response.statusText ?? "Ok",
 		status: data?.status ?? response.status ?? 200,
 	};
