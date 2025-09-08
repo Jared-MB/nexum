@@ -48,11 +48,13 @@ export const DELETE = async <T = unknown, B = any>(
 		throw error;
 	}
 
+	const bodyPayload = body instanceof FormData ? body : JSON.stringify(body);
+
 	const [responseError, response] = await tryCatch(
 		fetch(`${SERVER_URL}${url}`, {
 			method,
 			headers,
-			body: body ? JSON.stringify(body) : undefined,
+			body: bodyPayload,
 		}),
 	);
 

@@ -48,11 +48,13 @@ export const PATCH = async <T = unknown, B = any>(
 		throw error;
 	}
 
+	const bodyPayload = body instanceof FormData ? body : JSON.stringify(body);
+
 	const [responseError, response] = await tryCatch(
 		fetch(`${SERVER_URL}${url}`, {
 			method,
 			headers,
-			body: JSON.stringify(body),
+			body: bodyPayload,
 		}),
 	);
 

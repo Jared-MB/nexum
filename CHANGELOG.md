@@ -1,5 +1,11 @@
 # @kristall/nexum
 
+## 1.5.2
+
+### Patch Changes
+
+- 9eb324b: methods body now can be send as FormData instead of only string
+
 ## 1.5.1
 
 ### Patch Changes
