@@ -35,6 +35,7 @@ describe("createHttpClient", () => {
 		message: "test message",
 		status: 200,
 	};
+	const mockBody = { test: "test" };
 
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -77,9 +78,9 @@ describe("createHttpClient", () => {
 
 	it("should call POST with the correct parameters", async () => {
 		const client = createHttpClient({ serverUrl: mockServerUrl });
-		await client.POST(mockUrl, mockOptions);
+		await client.POST(mockUrl, mockBody, mockOptions);
 
-		expect(POST_METHOD).toHaveBeenCalledWith(mockUrl, {
+		expect(POST_METHOD).toHaveBeenCalledWith(mockUrl, mockBody, {
 			...mockOptions,
 			serverUrl: mockServerUrl,
 		});
@@ -87,9 +88,9 @@ describe("createHttpClient", () => {
 
 	it("should call PUT with the correct parameters", async () => {
 		const client = createHttpClient({ serverUrl: mockServerUrl });
-		await client.PUT(mockUrl, mockOptions);
+		await client.PUT(mockUrl, mockBody, mockOptions);
 
-		expect(PUT_METHOD).toHaveBeenCalledWith(mockUrl, {
+		expect(PUT_METHOD).toHaveBeenCalledWith(mockUrl, mockBody, {
 			...mockOptions,
 			serverUrl: mockServerUrl,
 		});
@@ -97,9 +98,9 @@ describe("createHttpClient", () => {
 
 	it("should call DELETE with the correct parameters", async () => {
 		const client = createHttpClient({ serverUrl: mockServerUrl });
-		await client.DELETE(mockUrl, mockOptions);
+		await client.DELETE(mockUrl, mockBody, mockOptions);
 
-		expect(DELETE_METHOD).toHaveBeenCalledWith(mockUrl, {
+		expect(DELETE_METHOD).toHaveBeenCalledWith(mockUrl, mockBody, {
 			...mockOptions,
 			serverUrl: mockServerUrl,
 		});
@@ -107,9 +108,9 @@ describe("createHttpClient", () => {
 
 	it("should call PATCH with the correct parameters", async () => {
 		const client = createHttpClient({ serverUrl: mockServerUrl });
-		await client.PATCH(mockUrl, mockOptions);
+		await client.PATCH(mockUrl, mockBody, mockOptions);
 
-		expect(PATCH_METHOD).toHaveBeenCalledWith(mockUrl, {
+		expect(PATCH_METHOD).toHaveBeenCalledWith(mockUrl, mockBody, {
 			...mockOptions,
 			serverUrl: mockServerUrl,
 		});

@@ -1,5 +1,11 @@
 # @kristall/nexum
 
+## 1.5.1
+
+### Patch Changes
+
+- 6d31866: createHttpClient methods can receive a body now
+
 ## 1.5.0
 
 ### Minor Changes

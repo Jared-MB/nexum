@@ -36,24 +36,40 @@ export const createHttpClient = (options: CreateHttpClientOptions) => {
 		return GET_METHOD(url, { ...rest, serverUrl });
 	};
 
-	const POST = (url: Url, options?: PostOptions) => {
+	const POST = <T = unknown, B = any>(
+		url: Url,
+		body: B,
+		options?: PostOptions,
+	) => {
 		const { serverUrl: _, ...rest } = options ?? {};
-		return POST_METHOD(url, { ...rest, serverUrl });
+		return POST_METHOD<T, B>(url, body, { ...rest, serverUrl });
 	};
 
-	const PUT = (url: Url, options?: PutOptions) => {
+	const PUT = <T = unknown, B = any>(
+		url: Url,
+		body: B,
+		options?: PutOptions,
+	) => {
 		const { serverUrl: _, ...rest } = options ?? {};
-		return PUT_METHOD(url, { ...rest, serverUrl });
+		return PUT_METHOD<T, B>(url, body, { ...rest, serverUrl });
 	};
 
-	const DELETE = (url: Url, options?: DeleteOptions) => {
+	const DELETE = <T = unknown, B = any>(
+		url: Url,
+		body: B,
+		options?: DeleteOptions,
+	) => {
 		const { serverUrl: _, ...rest } = options ?? {};
-		return DELETE_METHOD(url, { ...rest, serverUrl });
+		return DELETE_METHOD<T, B>(url, body, { ...rest, serverUrl });
 	};
 
-	const PATCH = (url: Url, options?: PatchOptions) => {
+	const PATCH = <T = unknown, B = any>(
+		url: Url,
+		body: B,
+		options?: PatchOptions,
+	) => {
 		const { serverUrl: _, ...rest } = options ?? {};
-		return PATCH_METHOD(url, { ...rest, serverUrl });
+		return PATCH_METHOD<T, B>(url, body, { ...rest, serverUrl });
 	};
 
 	return {
