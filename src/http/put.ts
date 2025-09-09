@@ -25,8 +25,8 @@ export interface PutOptions extends HttpOptions {
 	revalidateTags?: RevalidateTags;
 }
 
-export const PUT = async <T = unknown, B = any>(
-	url: Url,
+export const PUT = async <T = unknown, B = any, Routes extends Url = Url>(
+	url: Routes,
 	body: B,
 	options?: PutOptions,
 ): Promise<ApiResponse<T>> => {

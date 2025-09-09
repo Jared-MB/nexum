@@ -116,20 +116,6 @@ describe("createHttpClient", () => {
 		});
 	});
 
-	it("should override serverUrl from options if provided", async () => {
-		const customServerUrl = "https://custom-api.example.com";
-		const client = createHttpClient({ serverUrl: mockServerUrl });
-
-		// Call with custom serverUrl in options
-		await client.GET(mockUrl, { ...mockOptions, serverUrl: customServerUrl });
-
-		// The custom serverUrl should be overridden by the one from createHttpClient
-		expect(GET_METHOD).toHaveBeenCalledWith(mockUrl, {
-			...mockOptions,
-			serverUrl: mockServerUrl, // Should use the one from createHttpClient
-		});
-	});
-
 	it("should pass through the response from the HTTP methods", async () => {
 		const client = createHttpClient({ serverUrl: mockServerUrl });
 		const response = await client.GET(mockUrl);

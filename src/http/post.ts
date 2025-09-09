@@ -25,8 +25,8 @@ export interface PostOptions extends HttpOptions {
 	revalidateTags?: RevalidateTags;
 }
 
-export const POST = async <T = unknown, B = any>(
-	url: Url,
+export const POST = async <T = unknown, B = any, Routes extends Url = Url>(
+	url: Routes,
 	body: B,
 	options?: PostOptions,
 ): Promise<ApiResponse<T>> => {

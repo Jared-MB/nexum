@@ -1,5 +1,11 @@
 # @kristall/nexum
 
+## 1.5.4
+
+### Patch Changes
+
+- ced183c: type safe on createHttpClient routes
+
 ## 1.5.3
 
 ### Patch Changes

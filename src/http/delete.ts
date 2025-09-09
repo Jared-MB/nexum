@@ -25,8 +25,8 @@ export interface DeleteOptions extends HttpOptions {
 	revalidateTags?: RevalidateTags;
 }
 
-export const DELETE = async <T = unknown, B = any>(
-	url: Url,
+export const DELETE = async <T = unknown, B = any, Routes extends Url = Url>(
+	url: Routes,
 	body: B,
 	options?: DeleteOptions,
 ): Promise<ApiResponse<T>> => {

@@ -34,8 +34,8 @@ export interface GetOptions extends HttpOptions {
 	revalidate?: false | 0 | number | undefined;
 }
 
-export const GET = async <T = unknown>(
-	url: Url,
+export const GET = async <T = unknown, Routes extends Url = Url>(
+	url: Routes,
 	options?: GetOptions,
 ): Promise<ApiResponse<T>> => {
 	const cacheStrategy = options?.cache ?? "default";

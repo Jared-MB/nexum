@@ -1,3 +1,4 @@
+import type { HttpOptions } from "../interfaces/methods";
 import type { Url } from "../interfaces/routes";
 
 import { DELETE as DELETE_METHOD, type DeleteOptions } from "../http/delete";
@@ -7,12 +8,9 @@ import { POST as POST_METHOD, type PostOptions } from "../http/post";
 import { PUT as PUT_METHOD, type PutOptions } from "../http/put";
 import { NotDefinedError } from "./errors";
 
-interface CreateHttpClientOptions {
-	/**
-	 * Base URL to be used for the requests.
-	 */
+type CreateHttpClientOptions = Pick<HttpOptions, "serverUrl"> & {
 	serverUrl: string;
-}
+};
 
 /**
  * Creates a client instance with the specified base URL.
@@ -20,7 +18,9 @@ interface CreateHttpClientOptions {
  * While using this function and its methods, the `serverUrl` option on `next.config.ts` will be ignored.
  * Other options passed to the config will be used.
  */
-export const createHttpClient = (options: CreateHttpClientOptions) => {
+export const createHttpClient = <Routes extends Url>(
+	options: CreateHttpClientOptions,
+) => {
 	const { serverUrl } = options;
 
 	if (!serverUrl || typeof serverUrl !== "string" || !serverUrl.trim().length) {
@@ -31,45 +31,43 @@ export const createHttpClient = (options: CreateHttpClientOptions) => {
 		});
 	}
 
-	const GET = (url: Url, options?: GetOptions) => {
-		const { serverUrl: _, ...rest } = options ?? {};
-		return GET_METHOD(url, { ...rest, serverUrl });
+	const GET = <T = unknown>(
+		url: Routes,
+		options?: Omit<GetOptions, "serverUrl">,
+	) => {
+		return GET_METHOD<T, Routes>(url, { ...options, serverUrl });
 	};
 
 	const POST = <T = unknown, B = any>(
-		url: Url,
+		url: Routes,
 		body: B,
-		options?: PostOptions,
+		options?: Omit<PostOptions, "serverUrl">,
 	) => {
-		const { serverUrl: _, ...rest } = options ?? {};
-		return POST_METHOD<T, B>(url, body, { ...rest, serverUrl });
+		return POST_METHOD<T, B, Routes>(url, body, { ...options, serverUrl });
 	};
 
 	const PUT = <T = unknown, B = any>(
-		url: Url,
+		url: Routes,
 		body: B,
-		options?: PutOptions,
+		options?: Omit<PutOptions, "serverUrl">,
 	) => {
-		const { serverUrl: _, ...rest } = options ?? {};
-		return PUT_METHOD<T, B>(url, body, { ...rest, serverUrl });
+		return PUT_METHOD<T, B, Routes>(url, body, { ...options, serverUrl });
 	};
 
 	const DELETE = <T = unknown, B = any>(
-		url: Url,
+		url: Routes,
 		body: B,
-		options?: DeleteOptions,
+		options?: Omit<DeleteOptions, "serverUrl">,
 	) => {
-		const { serverUrl: _, ...rest } = options ?? {};
-		return DELETE_METHOD<T, B>(url, body, { ...rest, serverUrl });
+		return DELETE_METHOD<T, B, Routes>(url, body, { ...options, serverUrl });
 	};
 
 	const PATCH = <T = unknown, B = any>(
-		url: Url,
+		url: Routes,
 		body: B,
-		options?: PatchOptions,
+		options?: Omit<PatchOptions, "serverUrl">,
 	) => {
-		const { serverUrl: _, ...rest } = options ?? {};
-		return PATCH_METHOD<T, B>(url, body, { ...rest, serverUrl });
+		return PATCH_METHOD<T, B, Routes>(url, body, { ...options, serverUrl });
 	};
 
 	return {
