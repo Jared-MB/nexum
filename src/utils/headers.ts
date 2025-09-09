@@ -4,10 +4,17 @@ import { NEXUM_CONFIG } from "./config";
 import { getSessionCookie } from "./cookies";
 import { NotDefinedError } from "./errors";
 
+interface GetHeadersOptions {
+	auth?: boolean;
+	customHeaders?: HeadersInit;
+	__asFormData__?: boolean;
+}
+
 export const getHeaders = async ({
 	auth,
 	customHeaders,
-}: { auth?: boolean; customHeaders?: HeadersInit }): Promise<HeadersInit> => {
+	__asFormData__,
+}: GetHeadersOptions): Promise<HeadersInit> => {
 	const defaultAuthRequests = NEXUM_CONFIG.defaultAuthRequests;
 	if (typeof defaultAuthRequests !== "boolean") {
 		throw new NotDefinedError({
@@ -19,9 +26,12 @@ export const getHeaders = async ({
 
 	const needAuth = auth ?? defaultAuthRequests;
 
-	const headers: HeadersInit = {
-		"Content-Type": "application/json",
-	};
+	let headers: HeadersInit = {};
+	if (!__asFormData__) {
+		headers = {
+			"Content-Type": "application/json",
+		};
+	}
 
 	if (!needAuth) {
 		return {

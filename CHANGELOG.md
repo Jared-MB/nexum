@@ -1,5 +1,11 @@
 # @kristall/nexum
 
+## 1.5.3
+
+### Patch Changes
+
+- 6f9030b: remove content-type header when body is FormData
+
 ## 1.5.2
 
 ### Patch Changes

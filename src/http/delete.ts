@@ -41,14 +41,20 @@ export const DELETE = async <T = unknown, B = any>(
 		});
 	}
 
+	const __asFormData__ = body instanceof FormData;
+
 	const [error, headers] = await tryCatch(
-		getHeaders({ auth: options?.auth, customHeaders: options?.headers }),
+		getHeaders({
+			auth: options?.auth,
+			customHeaders: options?.headers,
+			__asFormData__,
+		}),
 	);
 	if (error) {
 		throw error;
 	}
 
-	const bodyPayload = body instanceof FormData ? body : JSON.stringify(body);
+	const bodyPayload = __asFormData__ ? body : JSON.stringify(body);
 
 	const [responseError, response] = await tryCatch(
 		fetch(`${SERVER_URL}${url}`, {

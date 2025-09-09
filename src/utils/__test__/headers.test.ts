@@ -108,4 +108,20 @@ describe("getHeaders", () => {
 			"X-Request-ID": "12345",
 		});
 	});
+
+	it("should return headers without content type when body is FormData", async () => {
+		const result = await getHeaders({
+			auth: false,
+			__asFormData__: true,
+			customHeaders: {
+				"X-Request-ID": "12345",
+			},
+		});
+
+		expect(result).toEqual({
+			"X-Request-ID": "12345",
+		});
+
+		expect(result).not.toHaveProperty("Content-Type");
+	});
 });
