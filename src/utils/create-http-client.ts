@@ -17,6 +17,10 @@ type CreateHttpClientOptions = Pick<HttpOptions, "serverUrl"> & {
  *
  * While using this function and its methods, the `serverUrl` option on `next.config.ts` will be ignored.
  * Other options passed to the config will be used.
+ *
+ * When to use `createHttpClient`:
+ * - You have multiple API endpoints with different base URLs.
+ * - Type safety for the URL.
  */
 export const createHttpClient = <Routes extends Url>(
 	options: CreateHttpClientOptions,
