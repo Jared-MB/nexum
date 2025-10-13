@@ -1,5 +1,11 @@
 # @kristall/nexum
 
+## 2.0.0
+
+### Major Changes
+
+- f310897: Support for nextjs 16
+
 ## 1.5.4
 
 ### Patch Changes

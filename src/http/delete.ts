@@ -1,29 +1,18 @@
 "use server";
 
-import type { RevalidateTags } from "../interfaces/cache.js";
 import type { Url } from "../interfaces/routes.js";
 import type { ApiResponse } from "../interfaces/server.js";
 
-import { HTTP, type HttpOptions } from "../interfaces/methods.js";
+import { HTTP, type HttpMutateOptions } from "../interfaces/methods.js";
 import { NEXUM_CONFIG } from "../utils/config";
 import { NotDefinedError } from "../utils/errors";
 import { getHeaders } from "../utils/headers";
 import { logger } from "../utils/logs";
 import { parseErrorResponse } from "../utils/responses";
 import { revalidateCacheTags } from "../utils/revalidation";
-import { tryCatch } from "../utils/tryCatch";
+import { tryCatch } from "@kristall/try-catch";
 
-export interface DeleteOptions extends HttpOptions {
-	/**
-	 * **NEXTJS ONLY**
-	 *
-	 * Cache revalidation strategy after POST request:
-	 * - string[]: Revalidate specific cache tags
-	 * - "never": Skip all cache revalidation, even if NextJS cache is available.
-	 * - undefined: Don't revalidate cache
-	 */
-	revalidateTags?: RevalidateTags;
-}
+export interface DeleteOptions extends HttpMutateOptions {}
 
 export const DELETE = async <T = unknown, B = any, Routes extends Url = Url>(
 	url: Routes,
@@ -111,7 +100,11 @@ export const DELETE = async <T = unknown, B = any, Routes extends Url = Url>(
 
 	logger.requestLog({ method, url, status: response.status });
 
-	await revalidateCacheTags(options?.revalidateTags, url);
+	await revalidateCacheTags(options?.revalidateTags, {
+		url,
+		profile: options?.profile,
+		revalidateFunction: options?.revalidateFunction,
+	});
 
 	return {
 		data: data?.data ?? (payload as T),

@@ -1,9 +1,18 @@
 import type { CacheAnalysis } from "../interfaces/cache.js";
 
 import chalk from "chalk";
+import pino from "pino";
+import pinoPretty from "pino-pretty";
+
 import { HTTP } from "../interfaces/methods";
 import { NEXUM_CONFIG } from "./config";
 import { __IS__DEV__ } from "./isDev";
+
+const stream = pinoPretty({
+	colorize: true,
+});
+
+const pinoLogger = pino(stream);
 
 interface RequestLog {
 	method: HTTP;
@@ -28,36 +37,36 @@ export class NexumLogger {
 		const message = `[${method}] ${url} [${status}]`;
 
 		if (method === HTTP.GET) {
-			console.log(this.NEXUM_LOGO + this.BLUE_LOG(message));
+			pinoLogger.info(this.NEXUM_LOGO + this.BLUE_LOG(message));
 			return;
 		}
 		if (method === HTTP.POST) {
-			console.log(this.NEXUM_LOGO + this.GREEN_LOG(message));
+			pinoLogger.info(this.NEXUM_LOGO + this.GREEN_LOG(message));
 			return;
 		}
 		if (method === HTTP.PUT) {
-			console.log(this.NEXUM_LOGO + this.YELLOW_LOG(message));
+			pinoLogger.info(this.NEXUM_LOGO + this.YELLOW_LOG(message));
 			return;
 		}
 		if (method === HTTP.PATCH) {
-			console.log(this.NEXUM_LOGO + chalk.magenta(message));
+			pinoLogger.info(this.NEXUM_LOGO + chalk.magenta(message));
 			return;
 		}
 		if (method === HTTP.DELETE) {
-			console.log(this.NEXUM_LOGO + this.RED_LOG(message));
+			pinoLogger.info(this.NEXUM_LOGO + this.RED_LOG(message));
 		}
 	}
 
 	public log(message: string, ...args: any[]) {
-		console.log(this.NEXUM_LOGO + message, ...args);
+		pinoLogger.info(this.NEXUM_LOGO + message, ...args);
 	}
 
 	public error(message: string, ...args: any[]) {
-		console.error(this.NEXUM_LOGO + chalk.red(message, ...args));
+		pinoLogger.error(this.NEXUM_LOGO + chalk.red(message, ...args));
 	}
 
 	public warn(message: string, ...args: any[]) {
-		console.warn(this.NEXUM_LOGO + chalk.yellow(message, ...args));
+		pinoLogger.warn(this.NEXUM_LOGO + chalk.yellow(message, ...args));
 	}
 
 	public cacheStatus(analysis: CacheAnalysis, url: string, method: string) {
@@ -72,32 +81,32 @@ export class NexumLogger {
 
 		const cacheStatusColor = status[analysis.status];
 
-		console.log(
+		pinoLogger.info(
 			`${this.NEXUM_LOGO}[CACHE] ${cacheStatusColor(
 				`[${analysis.status}]`,
 			)}: ${method} ${url} (${analysis.metadata.duration}ms)`,
 		);
 
 		analysis.metadata.tags.length > 0 &&
-			console.log(`\t   └─ Tags: [${analysis.metadata.tags.join(", ")}]`);
+			pinoLogger.info(`\t\t\t   | Tags: [${analysis.metadata.tags.join(", ")}]`);
 
 		NEXUM_CONFIG?.debug?.cacheLogging?.showCacheConfidence &&
-			console.log(
-				`\t   └─ Confidence: (${Math.round(analysis.confidence * 100)}%)`,
+			pinoLogger.info(
+				`\t\t\t   | Confidence: (${Math.round(analysis.confidence * 100)}%)`,
 			);
 
 		if (
 			NEXUM_CONFIG?.debug?.cacheLogging?.showCacheStrategy &&
 			analysis.metadata.strategy
 		) {
-			console.log(`\t   └─ Strategy: ${analysis.metadata.strategy}`);
+			pinoLogger.info(`\t\t\t   | Strategy: ${analysis.metadata.strategy}`);
 		}
 
 		if (
 			NEXUM_CONFIG?.debug?.cacheLogging?.showCacheIndicators &&
 			analysis.indicators.length > 0
 		) {
-			console.log(`\t   └─ Indicators: ${analysis.indicators.join(", ")}`);
+			pinoLogger.info(`\t\t\t   | Indicators: ${analysis.indicators.join(", ")}`);
 		}
 	}
 }

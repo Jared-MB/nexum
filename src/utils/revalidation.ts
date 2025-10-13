@@ -7,6 +7,8 @@ import { __IS__DEV__ } from "./isDev";
 import { logger } from "./logs";
 
 let revalidateTag: typeof import("next/cache").revalidateTag | undefined;
+let updateTag: typeof import("next/cache").updateTag | undefined;
+
 let nextCacheAvailable: boolean | undefined;
 
 const isNextCacheAvailable = async () => {
@@ -15,8 +17,10 @@ const isNextCacheAvailable = async () => {
 	try {
 		const nextCache = await import("next/cache");
 		revalidateTag = nextCache.revalidateTag;
+		updateTag = nextCache.updateTag;
 
-		nextCacheAvailable = typeof revalidateTag === "function";
+		nextCacheAvailable =
+			typeof revalidateTag === "function" && typeof updateTag === "function";
 
 		if (nextCacheAvailable) {
 			__IS__DEV__ &&
@@ -37,10 +41,18 @@ const isNextCacheAvailable = async () => {
 	}
 };
 
+interface RevalidateCacheTagsOptions {
+	url: string;
+	revalidateFunction?: "revalidateTag" | "updateTag";
+	profile?: Parameters<NonNullable<typeof revalidateTag>>[1];
+}
+
 export const revalidateCacheTags = async (
 	tags: RevalidateTags | undefined,
-	url: string,
+	options: RevalidateCacheTagsOptions,
 ) => {
+	const { revalidateFunction, url } = options;
+
 	if (tags === "never") {
 		__IS__DEV__ &&
 			logger.log(`[CACHE] Skipping revalidation for POST request on ${url}`);
@@ -64,9 +76,25 @@ export const revalidateCacheTags = async (
 		return;
 	}
 
+	const revalidationStrategy =
+		revalidateFunction ??
+		NEXUM_CONFIG?.defaultRevalidateFunction ??
+		"revalidateTag";
+
+	if (revalidationStrategy === "revalidateTag") {
+		const profile = options.profile ?? "max";
+		for (const tag of tags) {
+			logger.log(`[CACHE] Revalidating tag [${tag}]`);
+			// biome-ignore lint/style/noNonNullAssertion: This is always defined since we check if it's available before on the isNextCacheAvailable function
+			revalidateTag!(tag, profile);
+		}
+
+		return;
+	}
+
 	for (const tag of tags) {
-		logger.log(`[CACHE] Revalidating tag [${tag}]`);
+		logger.log(`[CACHE] Updating tag [${tag}]`);
 		// biome-ignore lint/style/noNonNullAssertion: This is always defined since we check if it's available before on the isNextCacheAvailable function
-		revalidateTag!(tag);
+		updateTag!(tag);
 	}
 };
