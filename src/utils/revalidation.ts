@@ -3,7 +3,7 @@
 import type { RevalidateTags } from "../interfaces/cache.js";
 
 import { NEXUM_CONFIG } from "./config";
-import { __IS__DEV__ } from "./isDev";
+import { __IS__DEV__ } from "./env";
 import { logger } from "./logs";
 
 let revalidateTag: typeof import("next/cache").revalidateTag | undefined;

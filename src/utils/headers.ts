@@ -2,6 +2,7 @@
 
 import { NEXUM_CONFIG } from "./config";
 import { getSessionCookie } from "./cookies";
+import { __IS__NEXT__BUILDING__ } from "./env";
 import { NotDefinedError } from "./errors";
 
 interface GetHeadersOptions {
@@ -51,7 +52,7 @@ export const getHeaders = async ({
 	}
 
 	const accessToken = await getSessionCookie(sessionCookieName);
-	if (!accessToken) {
+	if (!accessToken && !__IS__NEXT__BUILDING__) {
 		throw new NotDefinedError({
 			message: "**Access token is not defined**",
 			solution:

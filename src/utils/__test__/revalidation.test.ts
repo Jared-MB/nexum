@@ -26,7 +26,7 @@ vi.mock("../config", () => ({
 		defaultRevalidateFunction: undefined,
 	},
 }));
-vi.mock("../isDev", () => ({ __IS__DEV__: true }));
+vi.mock("../env", () => ({ __IS__DEV__: true }));
 
 // Mock logger with spies
 vi.mock("../logs", () => ({

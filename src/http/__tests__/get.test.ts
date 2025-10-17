@@ -22,7 +22,7 @@ vi.mock("../../utils/logs");
 vi.mock("../../utils/responses");
 vi.mock("@kristall/try-catch");
 vi.mock("../../utils/cache/cache-detector");
-vi.mock("../../utils/isDev", () => ({ __IS__DEV__: true }));
+vi.mock("../../utils/env", () => ({ __IS__DEV__: true }));
 
 // Mock global fetch and console
 global.fetch = vi.fn();

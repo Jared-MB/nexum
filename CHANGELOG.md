@@ -1,5 +1,11 @@
 # @kristall/nexum
 
+## 2.0.1
+
+### Patch Changes
+
+- 04c9879: Remove issue causing error logs for Nextjs when building
+
 ## 2.0.0
 
 ### Major Changes

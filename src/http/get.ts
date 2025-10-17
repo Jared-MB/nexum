@@ -9,7 +9,7 @@ import { analyzeCacheStatus } from "../utils/cache/cache-detector";
 import { NEXUM_CONFIG } from "../utils/config";
 import { NotDefinedError } from "../utils/errors";
 import { getHeaders } from "../utils/headers";
-import { __IS__DEV__ } from "../utils/isDev";
+import { __IS__DEV__ } from "../utils/env";
 import { logger } from "../utils/logs";
 import { parseErrorResponse } from "../utils/responses";
 

@@ -6,7 +6,7 @@ import pinoPretty from "pino-pretty";
 
 import { HTTP } from "../interfaces/methods";
 import { NEXUM_CONFIG } from "./config";
-import { __IS__DEV__ } from "./isDev";
+import { __IS__DEV__ } from "./env";
 
 const stream = pinoPretty({
 	colorize: true,
@@ -88,7 +88,9 @@ export class NexumLogger {
 		);
 
 		analysis.metadata.tags.length > 0 &&
-			pinoLogger.info(`\t\t\t   | Tags: [${analysis.metadata.tags.join(", ")}]`);
+			pinoLogger.info(
+				`\t\t\t   | Tags: [${analysis.metadata.tags.join(", ")}]`,
+			);
 
 		NEXUM_CONFIG?.debug?.cacheLogging?.showCacheConfidence &&
 			pinoLogger.info(
@@ -106,7 +108,9 @@ export class NexumLogger {
 			NEXUM_CONFIG?.debug?.cacheLogging?.showCacheIndicators &&
 			analysis.indicators.length > 0
 		) {
-			pinoLogger.info(`\t\t\t   | Indicators: ${analysis.indicators.join(", ")}`);
+			pinoLogger.info(
+				`\t\t\t   | Indicators: ${analysis.indicators.join(", ")}`,
+			);
 		}
 	}
 }
